@@ -1,47 +1,29 @@
-export default function Page() {
-  return (
-    <main
-      style={{
-        colorScheme: 'light dark',
-        position: 'relative',
-        display: 'flex',
-        minHeight: '100vh',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'light-dark(#fff, #000)',
-        color: 'light-dark(#000, #fff)',
-      }}
-    >
-      <svg
-        aria-hidden="true"
-        style={{ width: 80, height: 80 }}
-        width={80}
-        height={80}
-        fill="none"
-        viewBox="0 0 20 20"
-        xmlns="http://www.w3.org/2000/svg"
-        stroke="currentColor"
-        strokeWidth="0.5"
-      >
-        <path
-          d="M14.2 14.2H17V6.9375C17 4.76288 15.2371 3 13.0625 3H5.8V5.8M14.2 14.2V7.79063L7.79062 14.2H14.2ZM14.2 14.2V17H6.9375C4.76288 17 3 15.2371 3 13.0625V5.8H5.8M5.8 5.8V12.2313L12.2313 5.8H5.8Z"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <p
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 'calc(50% + 56px)',
-          transform: 'translateX(-50%)',
-          whiteSpace: 'nowrap',
-          fontSize: '14px',
-          fontWeight: 500,
-          color: 'light-dark(#71717a, #a1a1aa)',
-        }}
-      >
-        Your v0 generation will show here.
-      </p>
-    </main>
-  )
+"use client"
+
+import { useMemo, useState } from "react"
+import Link from "next/link"
+import { ArrowRight, BookOpen, Download, FileText, Flag, Menu, Search, SlidersHorizontal, Upload, X, ZoomIn, ZoomOut } from "lucide-react"
+
+const resources = [
+  { id: "physics-2024", title: "Physics Official Board Paper", board: "ICSE Class 10", subject: "Physics", type: "Board Exam", year: "2024", size: "1.8 MB", pages: "12 pages", tone: "amber" },
+  { id: "maths-2023", title: "Mathematics Board Examination", board: "ICSE Class 10", subject: "Mathematics", type: "Board Exam", year: "2023", size: "2.1 MB", pages: "16 pages", tone: "sage" },
+  { id: "chemistry-2024", title: "Chemistry Specimen Paper", board: "ISC Class 12", subject: "Chemistry", type: "Specimen Paper", year: "2024", size: "1.4 MB", pages: "10 pages", tone: "rose" },
+  { id: "english-2022", title: "English Literature Prelim", board: "ICSE Class 10", subject: "English Literature", type: "School Prelim", year: "2022", size: "980 KB", pages: "8 pages", tone: "blue" },
+  { id: "commercial-2025", title: "Commercial Studies Notes", board: "ICSE Class 10", subject: "Commercial Studies", type: "Chapter Notes", year: "2025", size: "3.2 MB", pages: "24 pages", tone: "lavender" },
+  { id: "maths-2021", title: "Calculus & Probability Revision", board: "ISC Class 12", subject: "Mathematics", type: "Chapter Notes", year: "2021", size: "2.6 MB", pages: "18 pages", tone: "peach" },
+]
+
+export default function Home() {
+  const [query, setQuery] = useState("")
+  const [activeFilter, setActiveFilter] = useState("All resources")
+  const [preview, setPreview] = useState<(typeof resources)[number] | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const visible = useMemo(() => resources.filter((item) => `${item.title} ${item.subject} ${item.board}`.toLowerCase().includes(query.toLowerCase()) && (activeFilter === "All resources" || item.subject === activeFilter)), [query, activeFilter])
+  return <main className="site-shell">
+    <header className="site-header"><Link href="/" className="brand"><span className="brand-mark">P</span><span><strong>Papyrus</strong><small>Built for the prep. Driven by students.</small></span></Link><nav className={menuOpen ? "nav-links open" : "nav-links"}><Link href="/">Archive</Link><Link href="#how-it-works">How it works</Link><Link href="/upload">Community upload</Link></nav><div className="header-actions"><Link href="/upload" className="button button-soft"><Upload size={16}/> Upload resource</Link><a href="#archive" className="button button-dark">Browse archive <ArrowRight size={16}/></a></div><button className="menu-button" aria-label="Toggle navigation" onClick={() => setMenuOpen(!menuOpen)}><Menu size={21}/></button></header>
+    <section className="hero"><div className="eyebrow"><span className="status-dot"/> Zero clutter <i/> No paywalls</div><h1>Master your boards with<br/><em>authentic</em> past papers.</h1><p>Instantly search, view, and download official ICSE &amp; ISC question papers, school prelims, and high-yield notes.</p><a className="text-link" href="#archive">Explore the archive <ArrowRight size={16}/></a></section>
+    <section className="archive-section" id="archive"><div className="section-heading"><div><p className="kicker">THE COMMUNITY ARCHIVE</p><h2>Find exactly what you need.</h2></div><span className="result-count">{visible.length} resources</span></div><div className="search-panel"><div className="search-box"><Search size={19}/><input aria-label="Search resources" placeholder="Search by title, subject, or year..." value={query} onChange={(e) => setQuery(e.target.value)}/></div><div className="filter-row"><button className={activeFilter === "All resources" ? "filter active" : "filter"} onClick={() => setActiveFilter("All resources")}>All resources</button>{["Physics", "Mathematics", "Chemistry"].map((filter) => <button key={filter} className={activeFilter === filter ? "filter active" : "filter"} onClick={() => setActiveFilter(filter)}>{filter}</button>)}<button className="filter-more"><SlidersHorizontal size={15}/> Filters</button></div></div><div className="resource-grid">{visible.map((item) => <article className="resource-card" key={item.id}><div className={`paper-thumb ${item.tone}`}><div className="paper-lines"/><span className="paper-label">{item.subject.slice(0, 2).toUpperCase()}</span><span className="paper-year">{item.year}</span></div><div className="card-body"><div className="card-meta"><span>{item.board}</span><span>{item.type}</span></div><h3>{item.title}</h3><p className="card-submeta"><FileText size={14}/> PDF · {item.size} <span>·</span> {item.pages}</p><div className="card-actions"><button className="preview-button" onClick={() => setPreview(item)}>Preview</button><Link className="download-button" href={`/paper/${item.id}`}><Download size={14}/> View paper</Link></div></div></article>)}</div>{visible.length === 0 && <div className="empty-state"><Search size={24}/><h3>No papers found</h3><p>Try another subject or search term.</p></div>}</section>
+    <section className="cta-section" id="how-it-works"><div><p className="kicker">YOUR NOTES MATTER</p><h2>Have a paper we&apos;re missing?</h2><p>Help thousands of students study smarter by adding a resource to the community archive.</p></div><Link href="/upload" className="button button-dark">Share a resource <ArrowRight size={16}/></Link></section><footer className="site-footer"><span>© 2026 Papyrus Archive</span><span>Made for the late-night learners.</span></footer>
+    {preview && <div className="modal-backdrop" role="presentation" onClick={() => setPreview(null)}><section className="preview-modal" role="dialog" aria-modal="true" aria-label="Paper preview" onClick={(e) => e.stopPropagation()}><div className="modal-header"><div><p className="kicker">QUICK PREVIEW</p><h2>{preview.title}</h2></div><button className="icon-button" onClick={() => setPreview(null)} aria-label="Close preview"><X size={19}/></button></div><div className="modal-toolbar"><span>{preview.board} · {preview.year}</span><div><button aria-label="Zoom out"><ZoomOut size={16}/></button><button aria-label="Zoom in"><ZoomIn size={16}/></button><button className="report-button"><Flag size={14}/> Report file</button></div></div><div className="document-preview"><div className="doc-page"><span className="doc-number">01</span><h3>{preview.subject.toUpperCase()}</h3><p className="doc-rule"/><p>ISC / ICSE Examination<br/>{preview.year} · Paper I</p><div className="fake-text"/><div className="fake-text short"/><div className="fake-text"/><div className="fake-text medium"/><h4>SECTION A</h4><p className="fake-question">Answer all questions. Each question carries two marks.</p></div></div><Link className="modal-download" href={`/paper/${preview.id}`}><Download size={16}/> Open full paper</Link></section></div>}
+  </main>
 }
