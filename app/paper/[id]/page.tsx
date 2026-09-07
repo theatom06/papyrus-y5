@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { ArrowLeft, Download, ThumbsDown, ThumbsUp } from "lucide-react"
 import { useState } from "react"
+import { PinPaper } from "@/components/pin-paper"
 
 const paperData: Record<string, any> = {
   "physics-2024": { title: "Physics Official Board Paper", board: "ICSE Class 10", subject: "Physics", type: "Board Exam", year: "2024", size: "1.8 MB", pages: "12", uploader: "Raj Kumar", uploadDate: "2024-08-15", votes: 234, upvotes: 189, downvotes: 4 },
@@ -23,7 +24,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
   const [downvoted, setDownvoted] = useState(false)
 
   return <main className="site-shell">
-    <header className="site-header"><Link href="/" className="brand"><span className="brand-mark">P</span><span><strong>Papyrus</strong><small>Built for the prep. Driven by students.</small></span></Link><nav className="nav-links"><Link href="/">Archive</Link><Link href="/#how-it-works">How it works</Link><Link href="/upload">Community upload</Link></nav><div className="header-actions"><a href="#" className="button button-dark">Download PDF</a></div></header>
+    <header className="site-header"><Link href="/" className="brand"><span className="brand-mark">P</span><span><strong>Papyrus</strong><small>Built for the prep. Driven by students.</small></span></Link><nav className="nav-links"><Link href="/">Archive</Link><Link href="/#how-it-works">How it works</Link><Link href="/upload">Community upload</Link><Link href="/pins">Pins</Link></nav><div className="header-actions"><a href="#" className="button button-dark">Download PDF</a></div></header>
     <div className="paper-layout">
       <div className="paper-container">
         <Link href="/" className="breadcrumb"><ArrowLeft size={14}/> Back to archive</Link>
@@ -57,7 +58,7 @@ export default function PaperPage({ params }: { params: { id: string } }) {
           <div className="metadata-row"><span>Pages</span><strong>{paper.pages} pages</strong></div>
           <div className="metadata-row"><span>Uploader</span><strong>{paper.uploader}</strong></div>
           <div className="metadata-row"><span>Uploaded</span><strong>{new Date(paper.uploadDate).toLocaleDateString()}</strong></div>
-          <a href={`/paper/${params.id}/download`} className="download-link"><Download size={14}/> Download PDF</a>
+          <a href={`/paper/${params.id}/download`} className="download-link"><Download size={14}/> Download PDF</a><div className="detail-pin"><PinPaper paperId={params.id}/></div>
         </div>
         <div className="sidebar-card vote-card">
           <p className="card-label">Community rating</p>
