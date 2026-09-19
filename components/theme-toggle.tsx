@@ -1,4 +1,0 @@
-"use client"
-import { Moon, Sun } from "lucide-react"
-import { useEffect, useState } from "react"
-export function ThemeToggle() { const [dark,setDark]=useState(false); useEffect(()=>{const saved=localStorage.getItem("papyrus-theme"); const initial=saved? saved==="dark":document.documentElement.classList.contains("dark"); setDark(initial); document.documentElement.classList.toggle("dark",initial)},[]); function toggle(){const next=!dark; setDark(next); document.documentElement.classList.toggle("dark",next); localStorage.setItem("papyrus-theme",next?"dark":"light")} return <button className="theme-toggle" onClick={toggle} aria-label={`Switch to ${dark?"light":"dark"} mode`}><span className={dark?"selected":""}><Moon size={15}/></span><span className={!dark?"selected":""}><Sun size={15}/></span></button> }
